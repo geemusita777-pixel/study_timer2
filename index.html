@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>背景付きアナログ時計</title>
+    <title>背景付きアナログ時計｜リアル秒針音付きオンライン時計</title>
+    <meta name="description" content="背景画像付きのリアルなアナログ時計。秒針の音付きでブラウザから全画面表示可能です。無料で利用できます。">
+    <meta name="keywords" content="アナログ時計, 秒針音, オンライン時計, 背景付き時計, 無料時計">
     <style>
         :root {
             --size: 100vmin;
@@ -33,6 +35,7 @@
     </style>
 </head>
 <body>
+    <h1>背景付きリアル秒針音のアナログ時計</h1>
     <div class="clock">
         <svg viewBox="-400 -400 800 800" aria-label="アナログ時計">
             <!-- 時計の写真（背景の上に重ねる） -->
@@ -44,7 +47,6 @@
                 height="800"
                 preserveAspectRatio="xMidYMid slice"
             />
-
             <!-- グラデーション定義 -->
             <defs>
                 <linearGradient id="glossyBlack" x1="0" y1="0" x2="0" y2="1">
@@ -54,12 +56,10 @@
                     <stop offset="100%" stop-color="#555" />
                 </linearGradient>
             </defs>
-
             <!-- 針 -->
             <g id="hourHand" class="hand"></g>
             <g id="minuteHand" class="hand"></g>
             <g id="secondHand" class="hand"></g>
-
             <!-- 中心軸 -->
             <circle class="pivot" r="6" />
         </svg>
@@ -132,4 +132,6 @@
     </script>
 </body>
 </html>
+
+
 
