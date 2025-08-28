@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>背景付きアナログ時計</title>
+    <style>
+        :root {
+            --size: 100vmin;
+        }
+        body {
+            margin: 0;
+            background: url("background.jpg") center center / cover no-repeat;
+            display: grid;
+            place-items: center;
+            height: 100vh;
+        }
+        .clock {
+            width: var(--size);
+            height: var(--size);
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .hand path, .hand circle {
+            fill: url(#glossyBlack);
+        }
+        .pivot {
+            fill: url(#glossyBlack);
+        }
+    </style>
+</head>
+<body>
+    <div class="clock">
+        <svg viewBox="-400 -400 800 800" aria-label="アナログ時計">
+            <!-- 時計の写真（背景の上に重ねる） -->
+            <image
+                href="myphotTouka.png"
+                x="-407"
+                y="-390"
+                width="800"
+                height="800"
+                preserveAspectRatio="xMidYMid slice"
+            />
+
+            <!-- グラデーション定義 -->
+            <defs>
+                <linearGradient id="glossyBlack" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#555" />
+                    <stop offset="30%" stop-color="#000" />
+                    <stop offset="70%" stop-color="#222" />
+                    <stop offset="100%" stop-color="#555" />
+                </linearGradient>
+            </defs>
+
+            <!-- 針 -->
+            <g id="hourHand" class="hand"></g>
+            <g id="minuteHand" class="hand"></g>
+            <g id="secondHand" class="hand"></g>
+
+            <!-- 中心軸 -->
+            <circle class="pivot" r="6" />
+        </svg>
+    </div>
+
+    <!-- 秒針音 -->
+    <audio id="tickSound" src="Clock.mp3" preload="auto"></audio>
+
+    <script>
+        (function () {
+            const svgNS = "http://www.w3.org/2000/svg";
+
+            function rectPath(len, width) {
+                const halfW = width / 2;
+                const topY = -len;
+                const baseY = 0;
+                return `M ${-halfW} ${baseY} L ${-halfW} ${topY} L ${halfW} ${topY} L ${halfW} ${baseY} Z`;
+            }
+
+            function makeHand(groupId, len, width, baseCap = 14) {
+                const g = document.getElementById(groupId);
+                const path = document.createElementNS(svgNS, "path");
+                path.setAttribute("d", rectPath(len, width));
+                g.appendChild(path);
+
+                const cap = document.createElementNS(svgNS, "circle");
+                cap.setAttribute("cx", 0);
+                cap.setAttribute("cy", 0);
+                cap.setAttribute("r", baseCap);
+                cap.setAttribute("opacity", "0.85");
+                g.appendChild(cap);
+            }
+
+            makeHand("hourHand", 110, 12);
+            makeHand("minuteHand", 160, 9);
+            makeHand("secondHand", 190, 4.5, 10);
+
+            const hourG = document.getElementById("hourHand");
+            const minuteG = document.getElementById("minuteHand");
+            const secondG = document.getElementById("secondHand");
+            const tickSound = document.getElementById("tickSound");
+
+            function updateClockAndTick() {
+                const now = new Date();
+                const h = now.getHours() % 12;
+                const m = now.getMinutes();
+                const s = now.getSeconds();
+
+                const hourAngle = h * 30 + m * 0.5;
+                const minuteAngle = m * 6;
+                const secondAngle = s * 6;
+
+                hourG.setAttribute("transform", `rotate(${hourAngle})`);
+                minuteG.setAttribute("transform", `rotate(${minuteAngle})`);
+                secondG.setAttribute("transform", `rotate(${secondAngle})`);
+
+                tickSound.currentTime = 0;
+                tickSound.play().catch(() => {});
+            }
+
+            function loop() {
+                const now = new Date();
+                updateClockAndTick();
+                const delay = 1000 - now.getMilliseconds();
+                setTimeout(loop, delay);
+            }
+
+            loop();
+        })();
+    </script>
+</body>
+</html>
